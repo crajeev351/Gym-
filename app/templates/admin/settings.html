@@ -1,0 +1,164 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Site Settings & SEO{% endblock %}
+{% block page_title %}Site Settings & Branding{% endblock %}
+
+{% block admin_body %}
+
+<div class="admin-box" style="max-width: 860px;">
+  <div class="admin-box-header">
+    <div>
+      <h3 class="admin-box-title">General Site Configuration</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Update business details, WhatsApp floating button text, brand accent color, and SEO metadata.</p>
+    </div>
+  </div>
+
+  <form method="POST" action="{{ url_for('admin.settings') }}">
+    {{ form.hidden_tag() }}
+
+    <!-- Brand Identity Section -->
+    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--admin-accent)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+      <span>Brand & Accent Color</span>
+    </h4>
+
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
+      <!-- Business Name -->
+      <div class="admin-form-group">
+        <label for="business_name">Business Name *</label>
+        {{ form.business_name(class="admin-input", placeholder="e.g. IronForge Fitness Studio", id="business_name", required=True) }}
+      </div>
+
+      <!-- Accent Color with Color Picker -->
+      <div class="admin-form-group">
+        <label for="accent_color">Brand Accent Color *</label>
+        <div class="color-picker-wrap">
+          <input type="color" id="accentColorPicker" value="{{ settings.accent_color if settings.accent_color else '#FF4500' }}" class="color-input-native" title="Click to choose custom color">
+          {{ form.accent_color(class="admin-input", placeholder="#FF4500", id="accent_color", style="font-family: monospace; font-weight: bold; text-transform: uppercase;", required=True) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Preset Color Swatches -->
+    <div style="margin-bottom: 24px;">
+      <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 8px;">Popular Fitness Accent Presets:</span>
+      <div style="display: flex; gap: 10px;">
+        <button type="button" onclick="document.getElementById('accent_color').value='#FF4500'; document.getElementById('accentColorPicker').value='#FF4500';" style="width: 28px; height: 28px; border-radius: 4px; border: 2px solid #fff; background: #FF4500; cursor: pointer;" title="Blaze Orange"></button>
+        <button type="button" onclick="document.getElementById('accent_color').value='#E50914'; document.getElementById('accentColorPicker').value='#E50914';" style="width: 28px; height: 28px; border-radius: 4px; border: 2px solid #fff; background: #E50914; cursor: pointer;" title="Electric Crimson"></button>
+        <button type="button" onclick="document.getElementById('accent_color').value='#00E5FF'; document.getElementById('accentColorPicker').value='#00E5FF';" style="width: 28px; height: 28px; border-radius: 4px; border: 2px solid #fff; background: #00E5FF; cursor: pointer;" title="Cyber Cyan"></button>
+        <button type="button" onclick="document.getElementById('accent_color').value='#10B981'; document.getElementById('accentColorPicker').value='#10B981';" style="width: 28px; height: 28px; border-radius: 4px; border: 2px solid #fff; background: #10B981; cursor: pointer;" title="Vibrant Emerald"></button>
+        <button type="button" onclick="document.getElementById('accent_color').value='#FFD700'; document.getElementById('accentColorPicker').value='#FFD700';" style="width: 28px; height: 28px; border-radius: 4px; border: 2px solid #fff; background: #FFD700; cursor: pointer;" title="Gold Energy"></button>
+      </div>
+    </div>
+
+    <!-- Tagline -->
+    <div class="admin-form-group">
+      <label for="tagline">Tagline</label>
+      {{ form.tagline(class="admin-input", placeholder="e.g. Transform Your Body & Elevate Your Life", id="tagline") }}
+    </div>
+
+    <hr style="border: none; border-top: 1px solid var(--admin-border); margin: 28px 0;">
+
+    <!-- Contact & Location Section -->
+    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--admin-accent)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+      <span>Contact Information</span>
+    </h4>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <!-- Phone -->
+      <div class="admin-form-group">
+        <label for="phone">Display Phone Number *</label>
+        {{ form.phone(class="admin-input", placeholder="+91 98765 43210", id="phone", required=True) }}
+      </div>
+
+      <!-- Email -->
+      <div class="admin-form-group">
+        <label for="email">Public Contact Email *</label>
+        {{ form.email(class="admin-input", placeholder="coach@fitness.com", id="email", required=True) }}
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="admin-form-group">
+      <label for="address">Studio Physical Address *</label>
+      {{ form.address(class="admin-textarea", placeholder="Studio address line...", id="address", rows=2, required=True) }}
+    </div>
+
+    <!-- Operating Hours -->
+    <div class="admin-form-group">
+      <label for="opening_hours">Operating Hours</label>
+      {{ form.opening_hours(class="admin-input", placeholder="Mon - Sat: 6:00 AM - 10:00 PM | Sun: 7:00 AM - 1:00 PM", id="opening_hours") }}
+    </div>
+
+    <hr style="border: none; border-top: 1px solid var(--admin-border); margin: 28px 0;">
+
+    <!-- WhatsApp Floating Button Section -->
+    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+      <span>Floating WhatsApp Button Integration</span>
+    </h4>
+
+    <div class="admin-form-group">
+      <label for="whatsapp_number">WhatsApp Number (with Country Code, no + or spaces) *</label>
+      {{ form.whatsapp_number(class="admin-input", placeholder="919876543210", id="whatsapp_number", required=True) }}
+      <small style="color: var(--text-dim); font-size: 0.75rem;">Example: For Indian number 9876543210, enter <strong>919876543210</strong></small>
+    </div>
+
+    <div class="admin-form-group">
+      <label for="whatsapp_message">Prefilled WhatsApp Message *</label>
+      {{ form.whatsapp_message(class="admin-textarea", placeholder="Hi! I want to book my 2 Days Free Trial...", id="whatsapp_message", rows=2, required=True) }}
+    </div>
+
+    <hr style="border: none; border-top: 1px solid var(--admin-border); margin: 28px 0;">
+
+    <!-- Social Media Links -->
+    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 16px;">Social Media Profiles</h4>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="admin-form-group">
+        <label for="instagram_url">Instagram Profile URL</label>
+        {{ form.instagram_url(class="admin-input", placeholder="https://instagram.com/...", id="instagram_url") }}
+      </div>
+      <div class="admin-form-group">
+        <label for="facebook_url">Facebook Page URL</label>
+        {{ form.facebook_url(class="admin-input", placeholder="https://facebook.com/...", id="facebook_url") }}
+      </div>
+      <div class="admin-form-group">
+        <label for="youtube_url">YouTube Channel URL</label>
+        {{ form.youtube_url(class="admin-input", placeholder="https://youtube.com/...", id="youtube_url") }}
+      </div>
+      <div class="admin-form-group">
+        <label for="twitter_url">Twitter / X Profile URL</label>
+        {{ form.twitter_url(class="admin-input", placeholder="https://x.com/...", id="twitter_url") }}
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid var(--admin-border); margin: 28px 0;">
+
+    <!-- SEO Meta Configuration -->
+    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--admin-accent)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <span>Search Engine Optimization (SEO)</span>
+    </h4>
+
+    <div class="admin-form-group">
+      <label for="meta_title">SEO Title Tag (&lt;title&gt;) *</label>
+      {{ form.meta_title(class="admin-input", placeholder="Personal Fitness Training | 2 Days Free Trial", id="meta_title", required=True) }}
+    </div>
+
+    <div class="admin-form-group">
+      <label for="meta_description">SEO Meta Description *</label>
+      {{ form.meta_description(class="admin-textarea", placeholder="Transform your physique with certified 1-on-1 personal coaching...", id="meta_description", rows=3, required=True) }}
+    </div>
+
+    <div style="margin-top: 32px;">
+      <button type="submit" class="btn-admin btn-admin-primary" style="padding: 12px 28px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        <span>Save All Settings</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

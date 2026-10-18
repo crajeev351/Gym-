@@ -1,0 +1,110 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Training Types{% endblock %}
+{% block page_title %}Training Types Management{% endblock %}
+
+{% block admin_body %}
+
+<div class="admin-box">
+  <div class="admin-box-header">
+    <div>
+      <h3 class="admin-box-title">Training Formats & Delivery Types ({{ training_types|length }})</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Manage 1-on-1, couples, group/family, and age-specific formats.</p>
+    </div>
+    <a href="{{ url_for('admin.training_type_new') }}" class="btn-admin btn-admin-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      <span>Add New Training Type</span>
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="width: 70px;">Order</th>
+          <th style="width: 100px;">Image</th>
+          <th>Training Type</th>
+          <th>Highlight Pill</th>
+          <th>Visibility</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if training_types %}
+          {% for t in training_types %}
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <span style="font-weight: 700; font-size: 0.9rem; min-width: 20px;">{{ t.order_num }}</span>
+                  <div class="order-btn-group">
+                    <form action="{{ url_for('admin.training_type_move', type_id=t.id, direction='up') }}" method="POST" style="display:inline;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="btn-order" title="Move Up" {{ 'disabled' if loop.first else '' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                      </button>
+                    </form>
+                    <form action="{{ url_for('admin.training_type_move', type_id=t.id, direction='down') }}" method="POST" style="display:inline;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="btn-order" title="Move Down" {{ 'disabled' if loop.last else '' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="img-preview-box">
+                  <img src="{{ t.image_url }}" alt="{{ t.title }}">
+                </div>
+              </td>
+              <td>
+                <div style="font-weight: 700; color: #ffffff; font-size: 1.05rem;">{{ t.title }}</div>
+                <p style="color: var(--text-muted); font-size: 0.85rem; max-width: 480px; margin-top: 4px; line-height: 1.4;">
+                  {{ t.description }}
+                </p>
+              </td>
+              <td>
+                {% if t.highlight %}
+                  <span class="status-pill status-contacted">{{ t.highlight }}</span>
+                {% else %}
+                  <span style="color: var(--text-dim); font-size: 0.8rem;">None</span>
+                {% endif %}
+              </td>
+              <td>
+                <form action="{{ url_for('admin.training_type_toggle', type_id=t.id) }}" method="POST">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="status-pill {{ 'status-converted' if t.is_active else 'status-not-interested' }}" style="cursor: pointer; border: none;" title="Click to toggle visibility">
+                    {{ '● Active' if t.is_active else '○ Hidden' }}
+                  </button>
+                </form>
+              </td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <a href="{{ url_for('admin.training_type_edit', type_id=t.id) }}" class="btn-admin btn-admin-outline btn-admin-sm" title="Edit Training Type">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    <span>Edit</span>
+                  </a>
+
+                  <form action="{{ url_for('admin.training_type_delete', type_id=t.id) }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-admin btn-admin-danger btn-admin-sm btn-delete-confirm" data-name="training type '{{ t.title }}'" title="Delete Training Type">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No training types found. Click "Add New Training Type" to create one.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

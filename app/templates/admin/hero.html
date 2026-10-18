@@ -1,0 +1,123 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Edit Hero Section{% endblock %}
+{% block page_title %}Hero Section Content & Visuals{% endblock %}
+
+{% block admin_body %}
+
+<div class="admin-box" style="max-width: 860px;">
+  <div class="admin-box-header">
+    <div>
+      <h3 class="admin-box-title">Hero Banner Configuration</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Customize what visitors see first on your homepage above the fold.</p>
+    </div>
+  </div>
+
+  <form method="POST" action="{{ url_for('admin.hero') }}" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+
+    <!-- Current Background Image Preview -->
+    <div class="admin-form-group">
+      <label>Current Hero Background Image</label>
+      <div style="position: relative; width: 100%; height: 240px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--admin-border); background: #000;">
+        <img src="{{ hero.image_url }}" alt="Hero Background Preview" style="width: 100%; height: 100%; object-fit: cover;">
+        <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; color: #fff;">
+          Active Image: {{ hero.image_url }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload New Background Image -->
+    <div class="admin-form-group">
+      <label for="hero_image">Upload New Hero Image (JPG, PNG, WEBP - Max 5MB)</label>
+      {{ form.hero_image(class="admin-input", id="hero_image") }}
+      {% if form.hero_image.errors %}
+        <span style="color: #ef4444; font-size: 0.8rem;">{{ form.hero_image.errors[0] }}</span>
+      {% endif %}
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
+      <!-- Highlighted Badge -->
+      <div class="admin-form-group">
+        <label for="badge_text">Highlighted Badge Text *</label>
+        {{ form.badge_text(class="admin-input", placeholder="e.g. 2 Days Free Trial", id="badge_text", required=True) }}
+      </div>
+
+      <!-- Button Text -->
+      <div class="admin-form-group">
+        <label for="button_text">CTA Button Text *</label>
+        {{ form.button_text(class="admin-input", placeholder="e.g. Book Free Trial", id="button_text", required=True) }}
+      </div>
+    </div>
+
+    <!-- Headline -->
+    <div class="admin-form-group">
+      <label for="headline">Main Headline *</label>
+      {{ form.headline(class="admin-input", placeholder="e.g. 6+ Years of Transforming Lives", id="headline", required=True) }}
+    </div>
+
+    <!-- Subheadline -->
+    <div class="admin-form-group">
+      <label for="subheadline">Subheadline / Supporting Text *</label>
+      {{ form.subheadline(class="admin-textarea", placeholder="Start Your Personal Fitness Journey...", id="subheadline", rows=3, required=True) }}
+    </div>
+
+    <!-- Button URL Target -->
+    <div class="admin-form-group">
+      <label for="button_url">CTA Button Target Link *</label>
+      {{ form.button_url(class="admin-input", placeholder="#booking", id="button_url", required=True) }}
+      <small style="color: var(--text-dim); font-size: 0.75rem;">Set to '#booking' to smoothly scroll visitors directly to the free-trial booking form.</small>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid var(--admin-border); margin: 30px 0;">
+
+    <h4 style="margin-bottom: 16px; font-size: 1.1rem; color: #fff;">Key Achievement Metrics Strip</h4>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <!-- Stat 1 -->
+      <div style="background: var(--admin-bg); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--admin-border);">
+        <div class="admin-form-group" style="margin-bottom: 10px;">
+          <label for="stat_1_val">Stat 1 Value</label>
+          {{ form.stat_1_val(class="admin-input", placeholder="6+", id="stat_1_val") }}
+        </div>
+        <div class="admin-form-group" style="margin-bottom: 0;">
+          <label for="stat_1_lbl">Stat 1 Label</label>
+          {{ form.stat_1_lbl(class="admin-input", placeholder="Years Coaching", id="stat_1_lbl") }}
+        </div>
+      </div>
+
+      <!-- Stat 2 -->
+      <div style="background: var(--admin-bg); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--admin-border);">
+        <div class="admin-form-group" style="margin-bottom: 10px;">
+          <label for="stat_2_val">Stat 2 Value</label>
+          {{ form.stat_2_val(class="admin-input", placeholder="500+", id="stat_2_val") }}
+        </div>
+        <div class="admin-form-group" style="margin-bottom: 0;">
+          <label for="stat_2_lbl">Stat 2 Label</label>
+          {{ form.stat_2_lbl(class="admin-input", placeholder="Lives Transformed", id="stat_2_lbl") }}
+        </div>
+      </div>
+
+      <!-- Stat 3 -->
+      <div style="background: var(--admin-bg); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--admin-border);">
+        <div class="admin-form-group" style="margin-bottom: 10px;">
+          <label for="stat_3_val">Stat 3 Value</label>
+          {{ form.stat_3_val(class="admin-input", placeholder="98%", id="stat_3_val") }}
+        </div>
+        <div class="admin-form-group" style="margin-bottom: 0;">
+          <label for="stat_3_lbl">Stat 3 Label</label>
+          {{ form.stat_3_lbl(class="admin-input", placeholder="Client Goal Success", id="stat_3_lbl") }}
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 32px;">
+      <button type="submit" class="btn-admin btn-admin-primary" style="padding: 12px 24px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        <span>Save Hero Changes</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

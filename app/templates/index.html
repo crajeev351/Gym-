@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- ==========================================
+     1. HERO SECTION
+     ========================================== -->
+<section class="hero-section" id="hero" style="background-image: url('{{ hero.image_url if hero else url_for('static', filename='images/hero-bg.jpg') }}');">
+  <div class="hero-overlay"></div>
+  <div class="hero-glow-blob"></div>
+
+  <div class="container" style="position: relative; z-index: 2;">
+    <div class="hero-content">
+      <!-- Highlighted Badge -->
+      <div class="badge badge-pulse" style="margin-bottom: 20px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        <span>{{ hero.badge_text if hero else '2 Days Free Trial' }}</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="hero-headline">
+        {{ hero.headline if hero else '6+ Years of Transforming Lives' }}
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="hero-subheadline">
+        {{ hero.subheadline if hero else 'Start Your Personal Fitness Journey with tailor-made training splits, 1-on-1 nutritional guidance, and dedicated accountability.' }}
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="hero-cta-group">
+        <a href="#booking" class="btn btn-primary" id="heroBookBtn">
+          {{ hero.button_text if hero else 'Book Free Trial' }}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+        <a href="#programs" class="btn btn-outline">
+          Explore Programs
+        </a>
+      </div>
+
+      <!-- Hero Metrics Strip -->
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-value">{{ hero.stat_1_val if hero else '6+' }}<span></span></div>
+          <div class="stat-label">{{ hero.stat_1_lbl if hero else 'Years Coaching' }}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ hero.stat_2_val if hero else '500+' }}<span></span></div>
+          <div class="stat-label">{{ hero.stat_2_lbl if hero else 'Lives Transformed' }}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ hero.stat_3_val if hero else '98%' }}<span></span></div>
+          <div class="stat-label">{{ hero.stat_3_lbl if hero else 'Client Goal Success' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     2. TRAINING PROGRAMS SECTION
+     ========================================== -->
+<section class="section section-alt" id="programs">
+  <div class="container">
+    <div class="section-header">
+      <div class="badge">Engineered For Results</div>
+      <h2 class="section-title">Specialized Training Programs</h2>
+      <p class="section-subtitle">Scientifically structured workout systems designed around your metabolism, biomechanics, and lifestyle schedule.</p>
+    </div>
+
+    <div class="cards-grid">
+      {% for program in programs %}
+        <div class="card">
+          <div class="card-img-wrap">
+            <img src="{{ program.image_url }}" alt="{{ program.title }}" loading="lazy">
+            {% if program.badge %}
+              <div class="card-badge badge">{{ program.badge }}</div>
+            {% endif %}
+            
+            <div class="card-icon-overlay">
+              {% if 'fat' in program.title.lower() or program.icon_name == 'flame' %}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+              {% elif 'muscle' in program.title.lower() or program.icon_name == 'dumbbell' %}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"></path></svg>
+              {% elif 'cardio' in program.title.lower() or program.icon_name == 'activity' %}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              {% else %}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">{{ program.title }}</h3>
+            <p class="card-desc">{{ program.description }}</p>
+            <a href="#booking" class="card-action btn-book-program" data-program="{{ program.title }}">
+              <span>Claim Free Trial For This</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     3. TRAINING TYPES SECTION
+     ========================================== -->
+<section class="section" id="training-types">
+  <div class="container">
+    <div class="section-header">
+      <div class="badge">Tailored Formats</div>
+      <h2 class="section-title">Flexible Training Types</h2>
+      <p class="section-subtitle">Whether you flourish with laser-focused solo training or thrive on the collective energy of partners, we have the ideal format for you.</p>
+    </div>
+
+    <div class="training-types-grid">
+      {% for type_item in training_types %}
+        <div class="type-card">
+          <div class="type-img-box">
+            <img src="{{ type_item.image_url }}" alt="{{ type_item.title }}" loading="lazy">
+            {% if type_item.highlight %}
+              <div class="type-pill">{{ type_item.highlight }}</div>
+            {% endif %}
+          </div>
+          <div class="type-content">
+            <h3 class="type-title">{{ type_item.title }}</h3>
+            <p class="type-desc">{{ type_item.description }}</p>
+            <a href="#booking" class="card-action btn-book-program" data-program="{{ type_item.title }}">
+              <span>Inquire This Format</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     WHY US / TRUST HIGHLIGHTS
+     ========================================== -->
+<section class="section section-alt" id="why-us" style="padding: 70px 0;">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;">
+      <div style="background: var(--bg-card); padding: 28px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; gap: 16px; align-items: flex-start;">
+        <div style="background: var(--accent-subtle); color: var(--accent-color); padding: 12px; border-radius: var(--radius-sm);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+        </div>
+        <div>
+          <h4 style="font-size: 1.15rem; margin-bottom: 6px;">Certified Trainers</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">Internationally accredited fitness coaches with injury-prevention mastery.</p>
+        </div>
+      </div>
+
+      <div style="background: var(--bg-card); padding: 28px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; gap: 16px; align-items: flex-start;">
+        <div style="background: var(--accent-subtle); color: var(--accent-color); padding: 12px; border-radius: var(--radius-sm);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <div>
+          <h4 style="font-size: 1.15rem; margin-bottom: 6px;">Custom Nutrition</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">Tailored macronutrient plans adjusted weekly according to your progress.</p>
+        </div>
+      </div>
+
+      <div style="background: var(--bg-card); padding: 28px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; gap: 16px; align-items: flex-start;">
+        <div style="background: var(--accent-subtle); color: var(--accent-color); padding: 12px; border-radius: var(--radius-sm);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+        <div>
+          <h4 style="font-size: 1.15rem; margin-bottom: 6px;">Flexible Timings</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">Early morning to late evening training slots designed for busy work schedules.</p>
+        </div>
+      </div>
+
+      <div style="background: var(--bg-card); padding: 28px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; gap: 16px; align-items: flex-start;">
+        <div style="background: var(--accent-subtle); color: var(--accent-color); padding: 12px; border-radius: var(--radius-sm);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div>
+          <h4 style="font-size: 1.15rem; margin-bottom: 6px;">Zero Risk Free Trial</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">Experience two full training sessions with no financial commitment required.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     4. BOOKING / FREE TRIAL FORM SECTION
+     ========================================== -->
+<section class="section booking-section" id="booking">
+  <div class="container">
+    <div class="booking-wrapper">
+      <!-- Left Info Box -->
+      <div class="booking-info">
+        <div class="badge">Limited Trial Slots</div>
+        <h2>Claim Your 2 Days Free Trial</h2>
+        <p>Experience hands-on private coaching, body composition analysis, and a personalized roadmap tailored specifically to your body.</p>
+
+        <ul class="perks-list">
+          <li class="perk-item">
+            <div class="perk-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span>2 Full 60-Minute Personal Training Sessions</span>
+          </li>
+          <li class="perk-item">
+            <div class="perk-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span>Body Composition & Movement Biomechanics Audit</span>
+          </li>
+          <li class="perk-item">
+            <div class="perk-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span>Personalized Workout & Calorie Breakdown Blueprint</span>
+          </li>
+          <li class="perk-item">
+            <div class="perk-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span>100% Free - No Credit Card or Commitment Required</span>
+          </li>
+        </ul>
+
+        <div style="display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: 0.9rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+          <span>Coach responds within 24 hours via Call or WhatsApp.</span>
+        </div>
+      </div>
+
+      <!-- Right Booking Form Box -->
+      <div class="booking-form-box">
+        <!-- Success Alert (Shown dynamically via JS or server flash) -->
+        <div class="success-card" id="bookingSuccessAlert">
+          <h3>Thank you!</h3>
+          <p>We will contact you within 24 hours.</p>
+        </div>
+
+        <form action="{{ url_for('public.book') }}" method="POST" id="bookingForm" class="booking-form" novalidate>
+          <!-- CSRF Token -->
+          {{ form.hidden_tag() }}
+
+          <!-- Hidden Honeypot Spam Trap -->
+          <div class="hp-field">
+            <label for="honeypot">Leave this blank</label>
+            <input type="text" name="honeypot" id="honeypot" autocomplete="off" tabindex="-1">
+          </div>
+
+          <!-- Full Name -->
+          <div class="form-group">
+            <label for="name" class="form-label">Full Name *</label>
+            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="e.g. Rahul Sharma", id="name", required=True) }}
+            <span class="error-text" id="name-error">{{ form.name.errors[0] if form.name.errors else "" }}</span>
+          </div>
+
+          <!-- Phone & Email in 2 columns -->
+          <div class="form-row">
+            <!-- Contact Number -->
+            <div class="form-group">
+              <label for="phone" class="form-label">Contact Number (10-Digit) *</label>
+              {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else ""), placeholder="9876543210", id="phone", maxlength="15", required=True) }}
+              <span class="error-text" id="phone-error">{{ form.phone.errors[0] if form.phone.errors else "" }}</span>
+            </div>
+
+            <!-- Email Address -->
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address *</label>
+              {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="rahul@example.com", id="email", required=True) }}
+              <span class="error-text" id="email-error">{{ form.email.errors[0] if form.email.errors else "" }}</span>
+            </div>
+          </div>
+
+          <!-- Gender Radio Buttons -->
+          <div class="form-group">
+            <label class="form-label">Gender *</label>
+            <div class="radio-group" id="genderRadioGroup">
+              {% for subfield in form.gender %}
+                <label class="radio-card {{ 'active' if subfield.checked else '' }}" for="{{ subfield.id }}">
+                  {{ subfield }}
+                  {% if subfield.data == 'Male' %}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="14" r="5"></circle><line x1="19" y1="5" x2="13.6" y2="10.4"></line><polyline points="19 10 19 5 14 5"></polyline></svg>
+                  {% else %}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="5"></circle><line x1="12" y1="14" x2="12" y2="21"></line><line x1="9" y1="18" x2="15" y2="18"></line></svg>
+                  {% endif %}
+                  <span>{{ subfield.label.text }}</span>
+                </label>
+              {% endfor %}
+            </div>
+            <span class="error-text" id="gender-error">{{ form.gender.errors[0] if form.gender.errors else "" }}</span>
+          </div>
+
+          <!-- Fitness Goal & Training Type in 2 columns -->
+          <div class="form-row">
+            <!-- Fitness Goal -->
+            <div class="form-group">
+              <label for="fitness_goal" class="form-label">Fitness Goal *</label>
+              {{ form.fitness_goal(class="form-control" + (" is-invalid" if form.fitness_goal.errors else ""), id="fitness_goal", required=True) }}
+              <span class="error-text" id="fitness_goal-error">{{ form.fitness_goal.errors[0] if form.fitness_goal.errors else "" }}</span>
+            </div>
+
+            <!-- Training Type -->
+            <div class="form-group">
+              <label for="training_type" class="form-label">Training Type *</label>
+              {{ form.training_type(class="form-control" + (" is-invalid" if form.training_type.errors else ""), id="training_type", required=True) }}
+              <span class="error-text" id="training_type-error">{{ form.training_type.errors[0] if form.training_type.errors else "" }}</span>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary btn-block" style="padding: 16px; margin-top: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span>Claim 2 Days Free Trial</span>
+          </button>
+
+          <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+            🔒 Your contact information is kept strictly confidential. No spam ever.
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
