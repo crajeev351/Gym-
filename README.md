@@ -1,6 +1,8 @@
 # IronForge Fitness - Lead Generation & Admin Management Portal
 
 A mobile-first, high-conversion lead generation website and secure admin management portal built exclusively with **Flask**, **Jinja2**, and **Vanilla CSS/JavaScript** (no React, Vue, or Node).
+For a local client walkthrough, see [the demo guide](DEMO.md).
+
 
 ---
 

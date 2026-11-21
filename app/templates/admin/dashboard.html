@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="stat-card-value">{{ leads_today }}</div>
-    <span style="font-size: 0.8rem; color: var(--text-dim); margin-top: 8px;">Received in last 24 hours</span>
+    <span style="font-size: 0.8rem; color: var(--text-dim); margin-top: 8px;">Received since midnight (UTC)</span>
   </div>
 
   <!-- Leads This Week -->
@@ -52,7 +52,7 @@
       </div>
     </div>
     <div class="stat-card-value">{{ status_counts['Converted'] }}</div>
-    <span style="font-size: 0.8rem; color: var(--text-dim); margin-top: 8px;">Successful member enrollments</span>
+    <span style="font-size: 0.8rem; color: var(--text-dim); margin-top: 8px;">{{ ((100 * status_counts['Converted'] / total_leads) | round(1)) if total_leads else 0 }}% of all trial requests</span>
   </div>
 </div>
 

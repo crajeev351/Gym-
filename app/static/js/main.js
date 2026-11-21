@@ -4,94 +4,67 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Mobile Menu Toggle
+  const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const hoverPointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+  document.querySelectorAll('.card, .type-card').forEach(card => {
+    let frame;
+    card.addEventListener('pointermove', event => {
+      if (motionPreference.matches || !hoverPointer.matches) return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const bounds = card.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+        card.style.setProperty('--tilt-x', `${-y * 7}deg`);
+        card.style.setProperty('--tilt-y', `${x * 7}deg`);
+        card.style.setProperty('--light-x', `${(x + 0.5) * 100}%`);
+        card.style.setProperty('--light-y', `${(y + 0.5) * 100}%`);
+      });
+    });
+    card.addEventListener('pointerleave', () => {
+      cancelAnimationFrame(frame);
+      card.style.removeProperty('--tilt-x');
+      card.style.removeProperty('--tilt-y');
+      card.style.removeProperty('--light-x');
+      card.style.removeProperty('--light-y');
+    });
+  });
+
   const mobileToggle = document.getElementById('mobileToggle');
   const navMenu = document.getElementById('navMenu');
 
-  if (mobileToggle && navMenu) {
-    mobileToggle.addEventListener('click', () => {
-      navMenu.classList.toggle('open');
-      const isExpanded = navMenu.classList.contains('open');
-      mobileToggle.setAttribute('aria-expanded', isExpanded);
-    });
-
-    // Close menu when clicking outside or clicking any nav link
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        navMenu.classList.remove('open');
-      });
-    });
+  function setMenuOpen(open) {
+    navMenu.classList.toggle('open', open);
+    mobileToggle.setAttribute('aria-expanded', String(open));
   }
 
-  // 2. Smooth Scroll for all internal hash links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      const targetId = this.getAttribute('href');
-      if (targetId && targetId !== '#') {
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          e.preventDefault();
-          const headerOffset = 80;
-          const elementPosition = targetElement.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }
-    });
+  mobileToggle.addEventListener('click', () => setMenuOpen(!navMenu.classList.contains('open')));
+  navMenu.addEventListener('click', event => {
+    if (event.target.closest('a')) setMenuOpen(false);
   });
-
-  // 3. Quick-Book from Program Cards
-  document.querySelectorAll('.btn-book-program').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      const programTitle = this.getAttribute('data-program');
-      const goalSelect = document.getElementById('fitness_goal');
-      const bookingSection = document.getElementById('booking');
-
-      if (goalSelect && programTitle) {
-        // Find matching option
-        for (let i = 0; i < goalSelect.options.length; i++) {
-          if (goalSelect.options[i].text.toLowerCase() === programTitle.toLowerCase()) {
-            goalSelect.selectedIndex = i;
-            goalSelect.classList.remove('is-invalid');
-            break;
-          }
-        }
-      }
-
-      if (bookingSection) {
-        const headerOffset = 80;
-        const targetPos = bookingSection.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-        window.scrollTo({ top: targetPos, behavior: 'smooth' });
-      }
-    });
-  });
-
-  // 4. Custom Gender Radio Button Selection
-  const genderLabels = document.querySelectorAll('.radio-card');
-  genderLabels.forEach(label => {
-    const radio = label.querySelector('input[type="radio"]');
-    if (radio && radio.checked) {
-      label.classList.add('active');
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && navMenu.classList.contains('open')) {
+      setMenuOpen(false);
+      mobileToggle.focus();
     }
+  });
 
-    label.addEventListener('click', () => {
-      genderLabels.forEach(l => l.classList.remove('active'));
-      label.classList.add('active');
-      if (radio) {
-        radio.checked = true;
-        clearFieldError('gender');
+  document.querySelectorAll('[data-booking-field]').forEach(link => {
+    link.addEventListener('click', () => {
+      const select = document.getElementById(link.dataset.bookingField);
+      const value = link.dataset.bookingValue;
+      if (select && Array.from(select.options).some(option => option.value === value)) {
+        select.value = value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
       }
     });
   });
 
   // 5. Booking Form Validation & AJAX Submission
   const bookingForm = document.getElementById('bookingForm');
-  const successCard = document.getElementById('bookingSuccessAlert');
+  const successCard = document.getElementById('booking-success')
+  const bookingError = document.getElementById('bookingError');
 
   if (bookingForm) {
     const nameInput = document.getElementById('name');
@@ -99,6 +72,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInput = document.getElementById('email');
     const goalSelect = document.getElementById('fitness_goal');
     const typeSelect = document.getElementById('training_type');
+    const finderGoal = document.getElementById('finder-goal');
+    const finderType = document.getElementById('finder-type');
+    const summary = document.getElementById('selectionSummary');
+
+    function updateSelection() {
+      if (finderGoal) finderGoal.value = goalSelect.value;
+      if (finderType) finderType.value = typeSelect.value;
+      const goal = goalSelect.value || 'Goal not selected';
+      const type = typeSelect.value || 'Format not selected';
+      summary.textContent = `${goal} · ${type}`;
+    }
+
+    [[finderGoal, goalSelect], [finderType, typeSelect]].forEach(([finder, field]) => {
+      if (!finder) return;
+      finder.addEventListener('change', () => {
+        field.value = finder.value;
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      field.addEventListener('change', updateSelection);
+    });
+    updateSelection();
 
     // Validation Regexes
     const indianPhoneRegex = /^[6-9]\d{9}$/;
@@ -176,9 +170,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Submit handler with AJAX & fallback
+    bookingForm.querySelectorAll('input[name="gender"]').forEach(radio => {
+      radio.addEventListener('change', () => clearFieldError('gender'));
+    });
+
+    function showBookingError(message) {
+      bookingError.textContent = message;
+      bookingError.hidden = false;
+    }
+
+    // Submit handler with AJAX
     bookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      bookingError.hidden = true;
+      successCard.hidden = true;
 
       let isValid = true;
 
@@ -242,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (!isValid) {
+        showBookingError('Check the highlighted fields and try again.');
         return;
       }
 
@@ -270,34 +276,29 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
 
+        if (!response.headers.get('content-type')?.includes('application/json')) {
+          showBookingError('We could not confirm your request. Refresh the page before trying again.');
+          return;
+        }
         const data = await response.json();
 
         if (response.ok && data.success) {
           bookingForm.reset();
-          genderLabels.forEach(l => l.classList.remove('active'));
-
-          if (successCard) {
-            successCard.style.display = 'block';
-            successCard.innerHTML = `
-              <div style="font-size: 2rem; margin-bottom: 8px;">🎉</div>
-              <h3 style="color:#10b981; margin-bottom: 6px;">Free Trial Booked!</h3>
-              <p>${data.message || "Thank you! We will contact you within 24 hours."}</p>
-            `;
-            successCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
+          updateSelection();
+          successCard.querySelector('p').textContent = data.message;
+          successCard.hidden = false;
+          successCard.focus();
         } else {
+          showBookingError(data.message || 'Unable to submit your request.');
           if (data.errors) {
             for (const [key, errorList] of Object.entries(data.errors)) {
               showFieldError(key, errorList[0]);
             }
-          } else if (data.message) {
-            alert(data.message);
-          }
+            }
         }
       } catch (err) {
         console.error("Booking error:", err);
-        // Fallback to regular form submission if fetch failed
-        bookingForm.submit();
+        showBookingError('We could not confirm your request. Check your connection before trying again.');
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
