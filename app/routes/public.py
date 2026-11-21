@@ -1,5 +1,5 @@
 import re
-from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, session
 from app.models import db, HeroContent, Program, TrainingType, SiteSetting, Lead
 from app.forms import BookingForm
 from app.rate_limiter import is_rate_limited
@@ -35,7 +35,8 @@ def index():
         programs=programs,
         training_types=training_types,
         settings=settings,
-        form=form
+        form=form,
+        booking_confirmed=session.pop('booking_confirmed', False)
     )
 
 
@@ -100,7 +101,7 @@ def book():
                 'lead_id': lead.id
             })
 
-        flash(success_msg, 'success')
+        session['booking_confirmed'] = True
         return redirect(url_for('public.index') + '#booking-success')
 
     # Validation errors

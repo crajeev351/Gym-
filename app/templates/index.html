@@ -7,12 +7,11 @@
      ========================================== -->
 <section class="hero-section" id="hero" style="background-image: url('{{ hero.image_url if hero else url_for('static', filename='images/hero-bg.jpg') }}');">
   <div class="hero-overlay"></div>
-  <div class="hero-glow-blob"></div>
 
   <div class="container" style="position: relative; z-index: 2;">
     <div class="hero-content">
       <!-- Highlighted Badge -->
-      <div class="badge badge-pulse" style="margin-bottom: 20px;">
+      <div class="badge" style="margin-bottom: 20px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
         <span>{{ hero.badge_text if hero else '2 Days Free Trial' }}</span>
       </div>
@@ -29,7 +28,7 @@
 
       <!-- CTA Buttons -->
       <div class="hero-cta-group">
-        <a href="#booking" class="btn btn-primary" id="heroBookBtn">
+        <a href="{{ hero.button_url if hero and hero.button_url else '#booking' }}" class="btn btn-primary" id="heroBookBtn">
           {{ hero.button_text if hero else 'Book Free Trial' }}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </a>
@@ -57,6 +56,32 @@
   </div>
 </section>
 
+{% if programs and training_types %}
+<section class="finder-section" id="finder" aria-labelledby="finder-title">
+  <div class="container finder-layout">
+    <div>
+      <p class="section-kicker">FIND YOUR STARTING POINT</p>
+      <h2 id="finder-title">A plan that starts with you.</h2>
+      <p>Choose your goal and how you like to train. We'll carry both into your trial request.</p>
+    </div>
+    <div class="finder-panel">
+      <label for="finder-goal">What would you like to work on?</label>
+      <select id="finder-goal" class="form-control">
+        <option value="">Choose a goal</option>
+        {% for program in programs %}<option value="{{ program.title }}">{{ program.title }}</option>{% endfor %}
+      </select>
+      <label for="finder-type">How would you like to train?</label>
+      <select id="finder-type" class="form-control">
+        <option value="">Choose a format</option>
+        {% for type_item in training_types %}<option value="{{ type_item.title }}">{{ type_item.title }}</option>{% endfor %}
+      </select>
+      <p class="finder-note">Not sure yet? Explore the options below or talk it through with a coach.</p>
+      <a class="btn btn-primary" href="#booking" id="finderContinue">Continue to your free trial <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
 
 <!-- ==========================================
      2. TRAINING PROGRAMS SECTION
@@ -64,9 +89,9 @@
 <section class="section section-alt" id="programs">
   <div class="container">
     <div class="section-header">
-      <div class="badge">Engineered For Results</div>
-      <h2 class="section-title">Specialized Training Programs</h2>
-      <p class="section-subtitle">Scientifically structured workout systems designed around your metabolism, biomechanics, and lifestyle schedule.</p>
+      <p class="section-kicker">YOUR GOALS. YOUR TRAINING.</p>
+      <h2 class="section-title">Find your kind of strong.</h2>
+      <p class="section-subtitle">Pick the goal that matters to you. We'll help you build a plan around it.</p>
     </div>
 
     <div class="cards-grid">
@@ -94,8 +119,8 @@
           <div class="card-body">
             <h3 class="card-title">{{ program.title }}</h3>
             <p class="card-desc">{{ program.description }}</p>
-            <a href="#booking" class="card-action btn-book-program" data-program="{{ program.title }}">
-              <span>Claim Free Trial For This</span>
+            <a href="#booking" class="card-action" data-booking-field="fitness_goal" data-booking-value="{{ program.title }}">
+              <span>Choose this program</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
           </div>
@@ -112,9 +137,9 @@
 <section class="section" id="training-types">
   <div class="container">
     <div class="section-header">
-      <div class="badge">Tailored Formats</div>
-      <h2 class="section-title">Flexible Training Types</h2>
-      <p class="section-subtitle">Whether you flourish with laser-focused solo training or thrive on the collective energy of partners, we have the ideal format for you.</p>
+      <p class="section-kicker">TRAIN YOUR WAY</p>
+      <h2 class="section-title">Better together. Or one-to-one.</h2>
+      <p class="section-subtitle">Choose the coaching format that fits your life and the people you want to train with.</p>
     </div>
 
     <div class="training-types-grid">
@@ -129,8 +154,8 @@
           <div class="type-content">
             <h3 class="type-title">{{ type_item.title }}</h3>
             <p class="type-desc">{{ type_item.description }}</p>
-            <a href="#booking" class="card-action btn-book-program" data-program="{{ type_item.title }}">
-              <span>Inquire This Format</span>
+            <a href="#booking" class="card-action" data-booking-field="training_type" data-booking-value="{{ type_item.title }}">
+              <span>Choose this format</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </a>
           </div>
@@ -199,9 +224,9 @@
     <div class="booking-wrapper">
       <!-- Left Info Box -->
       <div class="booking-info">
-        <div class="badge">Limited Trial Slots</div>
-        <h2>Claim Your 2 Days Free Trial</h2>
-        <p>Experience hands-on private coaching, body composition analysis, and a personalized roadmap tailored specifically to your body.</p>
+        <div class="badge">YOUR NEXT STEP</div>
+        <h2>Let's get started.</h2>
+        <p>Tell us about your goals and we'll be in touch to arrange your free trial.</p>
 
         <ul class="perks-list">
           <li class="perk-item">
@@ -238,13 +263,20 @@
 
       <!-- Right Booking Form Box -->
       <div class="booking-form-box">
+        <h3 class="form-heading">Request your free trial</h3>
+        <p class="form-intro">Already chose a programme or format? Your selection is ready below.</p>
+        <div class="selection-summary" aria-live="polite">
+          <strong>Your starting point</strong>
+          <p id="selectionSummary">Choose your goal and training format below.</p>
+        </div>
         <!-- Success Alert (Shown dynamically via JS or server flash) -->
-        <div class="success-card" id="bookingSuccessAlert">
-          <h3>Thank you!</h3>
+        <div class="success-card" id="booking-success" role="status" tabindex="-1" {{ '' if booking_confirmed else 'hidden' }}>
+          <h3>Trial request received</h3>
           <p>We will contact you within 24 hours.</p>
         </div>
 
         <form action="{{ url_for('public.book') }}" method="POST" id="bookingForm" class="booking-form" novalidate>
+          <p class="booking-error" id="bookingError" role="alert" hidden></p>
           <!-- CSRF Token -->
           {{ form.hidden_tag() }}
 
@@ -257,7 +289,7 @@
           <!-- Full Name -->
           <div class="form-group">
             <label for="name" class="form-label">Full Name *</label>
-            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="e.g. Rahul Sharma", id="name", required=True) }}
+            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="e.g. Rahul Sharma", id="name", aria_describedby="name-error", autocomplete="name", required=True) }}
             <span class="error-text" id="name-error">{{ form.name.errors[0] if form.name.errors else "" }}</span>
           </div>
 
@@ -266,14 +298,14 @@
             <!-- Contact Number -->
             <div class="form-group">
               <label for="phone" class="form-label">Contact Number (10-Digit) *</label>
-              {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else ""), placeholder="9876543210", id="phone", maxlength="15", required=True) }}
+              {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else ""), placeholder="9876543210", id="phone", aria_describedby="phone-error", type="tel", autocomplete="tel", required=True) }}
               <span class="error-text" id="phone-error">{{ form.phone.errors[0] if form.phone.errors else "" }}</span>
             </div>
 
             <!-- Email Address -->
             <div class="form-group">
               <label for="email" class="form-label">Email Address *</label>
-              {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="rahul@example.com", id="email", required=True) }}
+              {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="rahul@example.com", id="email", aria_describedby="email-error", type="email", autocomplete="email", required=True) }}
               <span class="error-text" id="email-error">{{ form.email.errors[0] if form.email.errors else "" }}</span>
             </div>
           </div>
@@ -281,9 +313,9 @@
           <!-- Gender Radio Buttons -->
           <div class="form-group">
             <label class="form-label">Gender *</label>
-            <div class="radio-group" id="genderRadioGroup">
+            <div class="radio-group" id="gender" role="group" aria-label="Gender" aria-describedby="gender-error">
               {% for subfield in form.gender %}
-                <label class="radio-card {{ 'active' if subfield.checked else '' }}" for="{{ subfield.id }}">
+                <label class="radio-card" for="{{ subfield.id }}">
                   {{ subfield }}
                   {% if subfield.data == 'Male' %}
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="14" r="5"></circle><line x1="19" y1="5" x2="13.6" y2="10.4"></line><polyline points="19 10 19 5 14 5"></polyline></svg>
@@ -302,14 +334,14 @@
             <!-- Fitness Goal -->
             <div class="form-group">
               <label for="fitness_goal" class="form-label">Fitness Goal *</label>
-              {{ form.fitness_goal(class="form-control" + (" is-invalid" if form.fitness_goal.errors else ""), id="fitness_goal", required=True) }}
+              {{ form.fitness_goal(class="form-control" + (" is-invalid" if form.fitness_goal.errors else ""), id="fitness_goal", aria_describedby="fitness_goal-error", required=True) }}
               <span class="error-text" id="fitness_goal-error">{{ form.fitness_goal.errors[0] if form.fitness_goal.errors else "" }}</span>
             </div>
 
             <!-- Training Type -->
             <div class="form-group">
               <label for="training_type" class="form-label">Training Type *</label>
-              {{ form.training_type(class="form-control" + (" is-invalid" if form.training_type.errors else ""), id="training_type", required=True) }}
+              {{ form.training_type(class="form-control" + (" is-invalid" if form.training_type.errors else ""), id="training_type", aria_describedby="training_type-error", required=True) }}
               <span class="error-text" id="training_type-error">{{ form.training_type.errors[0] if form.training_type.errors else "" }}</span>
             </div>
           </div>
@@ -325,6 +357,23 @@
           </p>
         </form>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="section faq-section" id="faq" aria-labelledby="faq-title">
+  <div class="container faq-layout">
+    <div>
+      <p class="section-kicker">GOOD TO KNOW</p>
+      <h2 class="section-title" id="faq-title">Questions before you start?</h2>
+      <p class="section-subtitle">Get in touch if you'd like to discuss your goals with the team.</p>
+      <a href="#contact" class="card-action">Contact the studio <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="faq-list">
+      <details><summary>How do I request a trial?</summary><p>Choose a goal and training format, complete the trial form, and send your request. The team will contact you to discuss the next step.</p></details>
+      <details><summary>Can I train with someone else?</summary><p>Explore the training formats above to see the current options and choose the one that suits you.</p></details>
+      <details><summary>What if I'm unsure which programme to choose?</summary><p>Choose the goal closest to what you'd like to work on. You can discuss your needs with the team when they contact you.</p></details>
+      <details><summary>How can I ask about timings and pricing?</summary><p>Contact the studio using the details below. The team can help with availability and current pricing.</p></details>
     </div>
   </div>
 </section>
